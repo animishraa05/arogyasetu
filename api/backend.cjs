@@ -1,20 +1,25 @@
-// Vercel catch-all serverless proxy: api/[...path].js
-// Vercel automatically routes ALL /api/* requests here via filesystem routing.
-// req.url = "/api/users/login/" — the full original path, preserved by Vercel.
-// This runs server-side (Node.js), so HTTP → Oracle VM has no mixed-content issue.
+// api/backend.cjs — CommonJS (works regardless of "type":"module" in package.json)
+// Vercel routes /api/* here with the path captured as ?__path=
+// Runs server-side: Node.js → Oracle VM over HTTP, no mixed-content restriction.
 
 const BACKEND_URL = process.env.BACKEND_URL || "http://92.4.67.143";
 
-export default async function handler(req, res) {
-  // req.url is the original request path, e.g. /api/users/login/
-  const targetUrl = `${BACKEND_URL}${req.url}`;
+module.exports = async function handler(req, res) {
+  const proxyPath = req.query.__path || "";
+
+  // Strip our internal __path param, keep any real query params the client sent
+  const url = new URL(req.url, "http://localhost");
+  url.searchParams.delete("__path");
+  const qs = url.searchParams.toString();
+
+  const targetUrl = `${BACKEND_URL}/api/${proxyPath}${qs ? "?" + qs : ""}`;
 
   const forwardHeaders = { ...req.headers };
-  delete forwardHeaders["host"];        // must be the backend's host
-  delete forwardHeaders["connection"];  // hop-by-hop header
+  delete forwardHeaders["host"];        // must be backend's host, not Vercel's
+  delete forwardHeaders["connection"];  // hop-by-hop, must not be forwarded
 
   try {
-    let body = undefined;
+    let body;
     if (req.method !== "GET" && req.method !== "HEAD") {
       body = await readBody(req);
     }
@@ -38,10 +43,10 @@ export default async function handler(req, res) {
     const buf = await backendRes.arrayBuffer();
     res.end(Buffer.from(buf));
   } catch (err) {
-    console.error("[proxy] Error:", err.message);
+    console.error("[proxy] fetch error:", err.message);
     res.status(502).json({ error: "Bad Gateway", detail: err.message });
   }
-}
+};
 
 function readBody(req) {
   return new Promise((resolve, reject) => {
