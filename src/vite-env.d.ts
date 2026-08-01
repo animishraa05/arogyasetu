@@ -1,0 +1,23 @@
+<!DOCTYPE html >
+  <html lang="en" >
+
+    <head>
+    <meta charset="UTF-8" />
+      <meta name="viewport" content = "width=device-width, initial-scale=1.0" />
+        <link rel="icon" href = "https://public-frontend-cos.metadl.com/mgx/img/favicon.png" type = "image/png" >
+          <title>Health Surveillance Portal - MDoNER </title>
+            < meta name = "description" content = "Ministry of Development of North Eastern Region - Health Surveillance Portal" />
+              <meta name="author" content = "MGX" />
+
+                <meta property="og:title" content = "Health Surveillance Portal - MDoNER" />
+                  <meta property="og:description" content = "Health reporting, disease monitoring, and alert dissemination for Northeast India" />
+                    <meta property="og:type" content = "website" />
+
+                      </head>
+
+                      < body >
+                      <div id="root" > </div>
+                        < script type = "module" src = "/src/main.tsx" > </script>
+                          </body>
+
+                          </html>
