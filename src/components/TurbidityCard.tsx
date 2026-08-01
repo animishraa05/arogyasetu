@@ -1,6 +1,5 @@
 // components/TurbidityCard.tsx
 import { useEffect, useState } from 'react'
-import { supabase } from '@/lib/supabase'
 
 export default function TurbidityCard() {
   const [turbidity, setTurbidity] = useState<number | null>(null)
@@ -15,15 +14,16 @@ export default function TurbidityCard() {
 
   const fetchLatest = async () => {
     setLoading(true)
-    const { data, error } = await supabase
-      .from('sensor_reading')
-      .select('turbidity_reading, created_at')
-      .order('created_at', { ascending: false })
-      .limit(1)
-      .single()
-
-    if (!error && data) setTurbidity(data.turbidity_reading)
-    else console.error('Supabase fetch error:', error)
+    try {
+      // Supabase dependency removed. 
+      // TODO: Replace with a call to your Oracle Cloud backend API endpoint if required.
+      // const res = await fetch(`${API_BASE_URL}/sensor-reading`);
+      // const data = await res.json();
+      // setTurbidity(data.turbidity_reading);
+      setTurbidity(null);
+    } catch (error) {
+      console.error('Fetch error:', error)
+    }
     setLoading(false)
   }
 
