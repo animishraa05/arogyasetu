@@ -23,16 +23,23 @@ const RoleBasedRedirect = () => {
     return <Landing />;
   }
 
-  switch (user.role) {
-    case "admin":
-      return <Navigate to="/admin" replace />;
+  // Handle case-sensitivity and null values gracefully
+  const role = user.role ? String(user.role).toLowerCase().trim() : "";
+  
+  if (role === "admin" || user.email === "admin@mdoner.gov.in") {
+    return <Navigate to="/admin" replace />;
+  }
+  
+  switch (role) {
     case "asha_worker":
+    case "asha":
       return <Navigate to="/asha" replace />;
     case "ngo":
       return <Navigate to="/ngo" replace />;
     case "clinic":
       return <Navigate to="/clinic" replace />;
     default:
+      console.warn("Unknown user role, falling back to landing:", user);
       return <Landing />;
   }
 };
