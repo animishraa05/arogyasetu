@@ -1,6 +1,12 @@
 {
   "rewrites": [
-    { "source": "/api/:path*", "destination": "/api/backend?path=:path*" },
-    { "source": "/(.*)", "destination": "/index.html" }
+    {
+      "source": "/api/:path*",
+      "destination": "https://arogyasetu.duckdns.org/api/:path*"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
   ]
 }
